@@ -18,7 +18,7 @@
 - **Functions:** Firebase Functions (Node.js/TypeScript)
 - **Hosting:** Firebase Hosting
 - **Notifications:** Firebase Cloud Messaging (FCM)
-- **SMS:** Third-party service (Twilio/AWS SNS) via Functions
+- **SMS:** Firebase Auth Phone Authentication (built-in)
 
 ### **Development & Deployment**
 - **Package Manager:** pnpm
@@ -309,40 +309,53 @@ export const setupMessageListener = () => {
 };
 ```
 
-### **SMS Integration (Firebase Functions)**
+### **Phone Authentication (Firebase Auth)**
 ```typescript
-// functions/src/notifications.ts
-import * as functions from 'firebase-functions';
-import { Twilio } from 'twilio';
+// Frontend: Firebase Auth handles phone verification automatically
+// lib/auth.ts
+import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from 'firebase/auth';
 
-const twilio = new Twilio(
-  functions.config().twilio.sid,
-  functions.config().twilio.token
-);
+const auth = getAuth();
 
-export const sendSMSNotification = functions.https.onCall(async (data, context) => {
-  if (!context.auth) throw new Error('Unauthorized');
-  
-  const { phoneNumber, message, type } = data;
-  
-  // Only send SMS for specific events
-  const allowedTypes = ['registration_success', 'new_member_welcome'];
-  if (!allowedTypes.includes(type)) {
-    return { success: false, reason: 'SMS not allowed for this notification type' };
-  }
-  
+// Setup reCAPTCHA verifier
+export const setupRecaptcha = () => {
+  window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+    'size': 'invisible',
+    'callback': (response: string) => {
+      // reCAPTCHA solved
+      console.log('reCAPTCHA verified');
+    }
+  }, auth);
+};
+
+// Send OTP (handled by Firebase)
+export const sendOTP = async (phoneNumber: string) => {
+  const appVerifier = window.recaptchaVerifier;
   try {
-    await twilio.messages.create({
-      body: message,
-      from: functions.config().twilio.phone,
-      to: phoneNumber
-    });
-    
-    return { success: true };
+    const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+    return confirmationResult;
   } catch (error) {
-    console.error('SMS Error:', error);
-    throw new Error('Failed to send SMS');
+    console.error('Failed to send OTP:', error);
+    throw error;
   }
+};
+
+// Verify OTP (handled by Firebase)
+export const verifyOTP = async (confirmationResult: any, code: string) => {
+  try {
+    const result = await confirmationResult.confirm(code);
+    return result.user;
+  } catch (error) {
+    console.error('Failed to verify OTP:', error);
+    throw error;
+  }
+};
+
+// Backend: Handle user creation after phone auth
+// functions/src/auth.ts
+export const handlePhoneAuthComplete = functions.auth.user().onCreate(async (user) => {
+  // User profile creation is handled automatically
+  // See backend-design.md for full implementation
 });
 ```
 
@@ -726,10 +739,8 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 NEXT_PUBLIC_VAPID_KEY=
 
-# Firebase Functions
-TWILIO_SID=
-TWILIO_TOKEN=
-TWILIO_PHONE=
+# No additional backend environment variables needed
+# Firebase Auth handles phone authentication automatically
 ```
 
 ---

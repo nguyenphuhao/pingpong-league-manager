@@ -704,11 +704,11 @@ enum NotificationStatus {
 // functions/src/auth.ts
 
 /**
- * Send SMS OTP for phone authentication
+ * Initialize phone authentication (Firebase Auth built-in)
+ * Note: Actual OTP sending is handled by Firebase Auth SDK on frontend
  */
-export const sendOTP = functions.https.onCall(async (data: {
+export const initPhoneAuth = functions.https.onCall(async (data: {
   phoneNumber: string;
-  recaptchaToken: string;
 }, context) => {
   // Rate limiting check
   await checkRateLimit(data.phoneNumber, 'otp_request', 3, 3600); // 3 per hour
@@ -718,58 +718,84 @@ export const sendOTP = functions.https.onCall(async (data: {
     throw new functions.https.HttpsError('invalid-argument', 'Invalid phone number format');
   }
   
-  // Verify reCAPTCHA
-  await verifyRecaptcha(data.recaptchaToken);
+  // Log the authentication attempt for security
+  await logActivity({
+    action: 'phone_auth_initiated',
+    phoneNumber: data.phoneNumber,
+    timestamp: admin.firestore.Timestamp.now()
+  });
   
-  // Send OTP via Twilio
-  const result = await twilioClient.verify.services(TWILIO_SERVICE_SID)
-    .verifications
-    .create({
-      to: data.phoneNumber,
-      channel: 'sms'
-    });
-  
-  return { success: true, sid: result.sid };
+  // Firebase Auth handles OTP sending automatically
+  // This function just validates and logs the attempt
+  return { success: true, message: 'Phone auth initialized' };
 });
 
 /**
- * Verify OTP and create/login user
+ * Handle post-authentication user setup
+ * Called after Firebase Auth phone verification is complete
  */
-export const verifyOTP = functions.https.onCall(async (data: {
-  phoneNumber: string;
-  code: string;
-}, context) => {
-  // Verify OTP with Twilio
-  const verification = await twilioClient.verify.services(TWILIO_SERVICE_SID)
-    .verificationChecks
-    .create({
-      to: data.phoneNumber,
-      code: data.code
+export const handlePhoneAuthComplete = functions.auth.user().onCreate(async (user) => {
+  // Extract phone number from Firebase Auth user
+  const phoneNumber = user.phoneNumber;
+  
+  if (!phoneNumber) {
+    console.error('User created without phone number');
+    return;
+  }
+  
+  // Check if user profile exists in Firestore
+  const userDoc = await admin.firestore().doc(`users/${user.uid}`).get();
+  
+  if (!userDoc.exists) {
+    // Create new user profile
+    const newUser: Partial<User> = {
+      id: user.uid,
+      phoneNumber: phoneNumber,
+      displayName: '', // Will be filled during profile setup
+      roles: ['member', 'player'],
+      ratingPoints: 1200, // Default rating
+      grade: 'B', // Default grade
+      fcmTokens: [],
+      isActive: true,
+      createdAt: admin.firestore.Timestamp.now(),
+      updatedAt: admin.firestore.Timestamp.now()
+    };
+    
+    await admin.firestore().doc(`users/${user.uid}`).set(newUser);
+    
+    // Log user creation
+    await logActivity({
+      action: 'user_created',
+      userId: user.uid,
+      phoneNumber: phoneNumber,
+      timestamp: admin.firestore.Timestamp.now()
     });
-  
-  if (verification.status !== 'approved') {
-    throw new functions.https.HttpsError('unauthenticated', 'Invalid OTP');
-  }
-  
-  // Create custom token for Firebase Auth
-  const customToken = await admin.auth().createCustomToken(data.phoneNumber);
-  
-  // Check if user exists
-  let user = await getUserByPhone(data.phoneNumber);
-  if (!user) {
-    // Create new user record
-    user = await createNewUser(data.phoneNumber);
   } else {
-    // Update last login
-    await updateUser(user.id, { lastLoginAt: admin.firestore.Timestamp.now() });
+    // Update last login for existing user
+    await admin.firestore().doc(`users/${user.uid}`).update({
+      lastLoginAt: admin.firestore.Timestamp.now(),
+      updatedAt: admin.firestore.Timestamp.now()
+    });
+  }
+});
+
+/**
+ * Get or create user profile
+ */
+export const getOrCreateUser = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
   }
   
-  return { 
-    success: true, 
-    customToken,
-    isNewUser: !user,
-    userId: user?.id 
-  };
+  const userId = context.auth.uid;
+  const userDoc = await admin.firestore().doc(`users/${userId}`).get();
+  
+  if (!userDoc.exists) {
+    // This shouldn't happen if handlePhoneAuthComplete works correctly
+    throw new functions.https.HttpsError('not-found', 'User profile not found');
+  }
+  
+  return { user: userDoc.data() };
 });
 ```
 
@@ -1408,10 +1434,16 @@ async function sendWebPushNotifications(notification: Notification, recipients: 
 }
 
 /**
- * Send SMS notifications (limited to critical messages only)
+ * Handle SMS notifications (Currently disabled - using Web Push only)
+ * Future: Can integrate with Vietnamese SMS providers if needed
  */
 async function sendSMSNotifications(notification: Notification, recipients: User[]): Promise<number> {
-  // SMS only for critical notification types
+  // SMS notifications are currently disabled
+  // The system relies on Web Push notifications instead
+  
+  console.log(`SMS notification skipped for ${recipients.length} recipients: ${notification.title}`);
+  
+  // Log which notifications would have been sent as SMS
   const smsAllowedTypes = [
     NotificationType.REGISTRATION_SUCCESS,
     NotificationType.WELCOME,
@@ -1419,29 +1451,16 @@ async function sendSMSNotifications(notification: Notification, recipients: User
     NotificationType.VENUE_CHANGE
   ];
   
-  if (!smsAllowedTypes.includes(notification.type)) {
-    return 0; // Skip SMS for non-critical notifications
-  }
-  
-  let sentCount = 0;
-  
-  for (const recipient of recipients) {
-    if (!recipient.smsEnabled) continue;
+  if (smsAllowedTypes.includes(notification.type)) {
+    console.log(`Would send SMS for critical notification type: ${notification.type}`);
     
-    try {
-      await twilioClient.messages.create({
-        body: `${notification.title}: ${notification.message}`,
-        from: functions.config().twilio.phone,
-        to: recipient.phoneNumber
-      });
-      
-      sentCount++;
-    } catch (error) {
-      console.error(`Failed to send SMS to ${recipient.phoneNumber}:`, error);
-    }
+    // TODO: Integrate Vietnamese SMS provider if needed
+    // Example providers: eSMS, SpeedSMS, Stringee
+    // Cost: ~300-500 VND per SMS vs ~1800 VND for Twilio
   }
   
-  return sentCount;
+  // Return 0 as no SMS was actually sent
+  return 0;
 }
 ```
 

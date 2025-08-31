@@ -317,7 +317,7 @@ graph TD
     U -->|Yes| V[Send SMS]
     U -->|No| W[Skip SMS]
     
-    V --> X[Twilio API]
+    V --> X[SMS Provider (Future)]
     W --> Y[Web Push Only]
 ```
 
