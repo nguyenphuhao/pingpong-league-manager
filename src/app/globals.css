@@ -116,39 +116,91 @@
   * {
     @apply border-border outline-ring/50;
   }
+  
+  /* Base styles - will be overridden by age-specific classes */
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
     font-family: Inter, system-ui, Arial, sans-serif;
-    font-size: 16px; /* Base mobile font size */
+    font-size: var(--base-font-size, 16px);
     line-height: 1.6;
   }
+
+  /* Age-specific body styles */
+  body.over40 {
+    font-size: 16px;
+    line-height: 1.7; /* Better readability for 40+ */
+  }
   
-  /* Responsive body font size for larger screens */
+  body.under40 {
+    font-size: 14px;
+    line-height: 1.6; /* Compact for younger users */
+  }
+  
+  /* Responsive font scaling */
   @media (min-width: 640px) {
-    body { font-size: 18px; } /* Larger for 40+ users on desktop */
+    body.over40 { font-size: 18px; }
+    body.under40 { font-size: 16px; }
   }
 
-  /* Typography optimized for 40+ users - Mobile first responsive */
-  h1 { @apply text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight; }
-  h2 { @apply text-xl sm:text-2xl lg:text-3xl font-semibold leading-tight; }
-  h3 { @apply text-lg sm:text-xl lg:text-2xl font-semibold leading-tight; }
-  h4 { @apply text-base sm:text-lg lg:text-xl font-medium leading-normal; }
-  h5 { @apply text-sm sm:text-base lg:text-lg font-medium leading-normal; }
-  h6 { @apply text-sm sm:text-base font-medium leading-normal; }
+  /* Typography for 40+ users - Larger, more accessible */
+  body.over40 h1 { @apply text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight; }
+  body.over40 h2 { @apply text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight; }
+  body.over40 h3 { @apply text-xl sm:text-2xl lg:text-3xl font-semibold leading-tight; }
+  body.over40 h4 { @apply text-lg sm:text-xl lg:text-2xl font-medium leading-normal; }
+  body.over40 h5 { @apply text-base sm:text-lg lg:text-xl font-medium leading-normal; }
+  body.over40 h6 { @apply text-sm sm:text-base lg:text-lg font-medium leading-normal; }
   
-  /* Touch targets minimum 44px for accessibility */
-  button, a, [role="button"] {
-    min-height: 44px;
-    min-width: 44px;
+  /* Typography for under 40 users - Compact, modern */
+  body.under40 h1 { @apply text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight; }
+  body.under40 h2 { @apply text-xl sm:text-2xl lg:text-3xl font-semibold leading-tight; }
+  body.under40 h3 { @apply text-lg sm:text-xl lg:text-2xl font-semibold leading-tight; }
+  body.under40 h4 { @apply text-base sm:text-lg lg:text-xl font-medium leading-normal; }
+  body.under40 h5 { @apply text-sm sm:text-base lg:text-lg font-medium leading-normal; }
+  body.under40 h6 { @apply text-xs sm:text-sm lg:text-base font-medium leading-normal; }
+  
+  /* Touch targets - Larger for 40+ users */
+  body.over40 button, 
+  body.over40 a, 
+  body.over40 [role="button"] {
+    min-height: 48px;
+    min-width: 48px;
+  }
+  
+  body.under40 button, 
+  body.under40 a, 
+  body.under40 [role="button"] {
+    min-height: 40px;
+    min-width: 40px;
   }
 
-  /* Focus rings for accessibility */
-  button:focus-visible, 
-  a:focus-visible, 
-  input:focus-visible, 
-  select:focus-visible, 
-  textarea:focus-visible {
-    @apply outline-none ring-4 ring-ring/75;
+  /* Enhanced focus rings for 40+ users */
+  body.over40 button:focus-visible, 
+  body.over40 a:focus-visible, 
+  body.over40 input:focus-visible, 
+  body.over40 select:focus-visible, 
+  body.over40 textarea:focus-visible {
+    @apply outline-none ring-4 ring-ring;
+  }
+  
+  body.under40 button:focus-visible, 
+  body.under40 a:focus-visible, 
+  body.under40 input:focus-visible, 
+  body.under40 select:focus-visible, 
+  body.under40 textarea:focus-visible {
+    @apply outline-none ring-2 ring-ring/75;
+  }
+
+  /* Age-specific spacing utilities */
+  .age-spacing {
+    gap: var(--component-spacing, 1rem);
+  }
+  
+  .age-padding {
+    padding: var(--content-padding, 1rem);
+  }
+  
+  .age-section {
+    margin-bottom: var(--section-spacing, 1rem);
   }
 
   /* High contrast mode support */
@@ -158,6 +210,13 @@
       --background: oklch(1 0 0); /* Pure white */
       --foreground: oklch(0 0 0); /* Pure black */
       --border: oklch(0 0 0); /* Pure black */
+    }
+    
+    .dark {
+      --primary: oklch(1 0 0); /* Pure white */
+      --background: oklch(0 0 0); /* Pure black */
+      --foreground: oklch(1 0 0); /* Pure white */
+      --border: oklch(1 0 0); /* Pure white */
     }
   }
 

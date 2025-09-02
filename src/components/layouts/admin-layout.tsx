@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { Header } from '@/components/common/header';
 import { AuthGuard } from '@/components/auth/auth-guard';
 import { useAuth } from '@/contexts/auth-context';
+import { ThemeSwitcher, QuickThemeToggle } from '@/components/common/theme-switcher';
 import { NavItem } from '@/types';
 
 const adminNavItems: NavItem[] = [
@@ -50,6 +51,8 @@ export function AdminLayout({ children, title, subtitle, actions }: AdminLayoutP
   const headerActions = (
     <div className="flex items-center space-x-2">
       {actions}
+      <ThemeSwitcher />
+      <QuickThemeToggle />
       <button
         onClick={handleLogout}
         className={cn(

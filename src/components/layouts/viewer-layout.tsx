@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/common/header';
 import { NavItem } from '@/types';
+import { ThemeSwitcher } from '@/components/common/theme-switcher';
 
 const viewerNavItems: NavItem[] = [
   { id: 'dashboard', label: 'Tổng quan', icon: Monitor, href: '/viewer' },
@@ -20,10 +21,10 @@ interface ViewerLayoutProps {
   title: string;
   subtitle?: string;
   onBack?: () => void;
-  showFullscreen?: boolean;
+  showThemeSwitch?: boolean;
 }
 
-export function ViewerLayout({ children, title, subtitle, onBack, showFullscreen = false }: ViewerLayoutProps) {
+export function ViewerLayout({ children, title, subtitle, onBack, showThemeSwitch = false }: ViewerLayoutProps) {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
@@ -33,25 +34,8 @@ export function ViewerLayout({ children, title, subtitle, onBack, showFullscreen
     return pathname.startsWith(href);
   };
 
-  const headerActions = showFullscreen ? (
-    <button
-      className={cn(
-        'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-        'bg-primary text-primary-foreground hover:bg-primary/90',
-        'focus:outline-none focus:ring-4 focus:ring-ring/75',
-        'min-h-[44px]'
-      )}
-      onClick={() => {
-        if (document.fullscreenElement) {
-          document.exitFullscreen();
-        } else {
-          document.documentElement.requestFullscreen();
-        }
-      }}
-      aria-label="Toàn màn hình"
-    >
-      Toàn màn hình
-    </button>
+  const headerActions = showThemeSwitch ? (
+    <ThemeSwitcher />
   ) : null;
 
   return (

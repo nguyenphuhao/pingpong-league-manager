@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, Trophy, Calendar, User, Award, Bell, Settings, LogOut } from 'lucide-react';
+import { Home, Trophy, Calendar, User, Award, Bell, LogOut } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { Route } from 'next';
@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { Header } from '@/components/common/header';
 import { AuthGuard } from '@/components/auth/auth-guard';
 import { useAuth } from '@/contexts/auth-context';
+import { ThemeSwitcher, QuickThemeToggle } from '@/components/common/theme-switcher';
 import { NavItem } from '@/types';
 
 const userNavItems: NavItem[] = [
@@ -60,17 +61,8 @@ export function UserLayout({ children, title, subtitle, onBack, actions }: UserL
       >
         <Bell className="w-5 h-5" />
       </button>
-      <button
-        className={cn(
-          'p-2 rounded-lg transition-colors',
-          'hover:bg-accent text-muted-foreground hover:text-foreground',
-          'focus:outline-none focus:ring-4 focus:ring-ring/75',
-          'min-h-[44px] min-w-[44px]'
-        )}
-        aria-label="Cài đặt"
-      >
-        <Settings className="w-5 h-5" />
-      </button>
+      <ThemeSwitcher />
+      <QuickThemeToggle />
       <button
         onClick={handleLogout}
         className={cn(

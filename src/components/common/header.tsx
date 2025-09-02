@@ -1,5 +1,8 @@
+'use client';
+
 import { ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useThemeClasses } from '@/contexts/theme-context';
 
 interface HeaderProps {
   title: string;
@@ -8,26 +11,35 @@ interface HeaderProps {
 }
 
 export function Header({ title, onBack, actions }: HeaderProps) {
+  const themeClasses = useThemeClasses();
+  
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-      <div className="flex items-center justify-between h-14 sm:h-16 px-3 sm:px-4">
+    <header className="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
+      <div className={cn(
+        "flex items-center justify-between px-3 sm:px-4",
+        themeClasses.padding.replace('p-', 'py-')
+      )}>
         <div className="flex items-center min-w-0 flex-1">
           {onBack && (
             <button
               onClick={onBack}
               className={cn(
                 "mr-2 sm:mr-4 p-2 -ml-2 rounded-lg",
-                "hover:bg-slate-100 transition-colors",
-                "focus:outline-none focus:ring-4 focus:ring-slate-300",
-                "min-h-[44px] min-w-[44px] flex items-center justify-center"
+                "hover:bg-accent transition-colors",
+                "focus:outline-none focus:ring-4 focus:ring-ring/75",
+                themeClasses.button.base,
+                "flex items-center justify-center"
               )}
               aria-label="Quay lại"
             >
-              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700" />
+              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-foreground" />
             </button>
           )}
           
-          <h1 className="text-lg sm:text-xl font-semibold text-slate-900 truncate">
+          <h1 className={cn(
+            "font-semibold text-foreground truncate",
+            themeClasses.heading.h4
+          )}>
             {title}
           </h1>
         </div>

@@ -41,7 +41,7 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development' && u
     console.log('Storage emulator connection failed:', error); 
   }
 } else {
-  console.log('🔥 Using production Firebase services');
+  console.log(`🔥 Using ${process.env.NODE_ENV} Firebase services`);
 }
 
 export default app;
