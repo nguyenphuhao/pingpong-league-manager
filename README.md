@@ -1,345 +1,339 @@
 # 🏓 Ping Pong League Manager
 
-A comprehensive **Web/PWA system** for managing ping pong tournaments with automatic High-Low pairing, multiple tournament types, SMS OTP authentication, real-time match coordination, and role-based access control.
+**A comprehensive web application for managing ping pong tournaments with Firebase Authentication, user management, and role-based access control.**
 
-## 📋 Overview
+## 🌐 **Live Application**
 
-This system is designed specifically for **adults 40+ years old** with an emphasis on simplicity, large touch targets, high contrast design, and intuitive user experience. The platform supports singles, doubles, and team tournaments with automatic scheduling, real-time updates, and comprehensive tournament management.
-
-## ✨ Key Features
-
-### 🔐 Authentication & User Management
-- **SMS OTP Authentication** via Firebase Auth (built-in phone verification)
-- **Role-based Access Control**: Admin, Organizer, Referee, Treasurer, Member, Player, Captain, Viewer
-- **User Profiles** with rating system and automatic grade assignment (A/B/C)
-- **Phone number validation** for Vietnamese numbers (+84)
-
-### 🏆 Tournament Management
-- **Multiple Tournament Types**: Singles, Doubles, Team events
-- **Flexible Tournament Formats**: Round Robin, Knockout, Mixed
-- **Round-specific Configuration**: Best-of-3/5/7, custom tie-break rules
-- **Registration Management** with waitlist and substitute players
-- **Payment Tracking** with multiple payment methods
-
-### ⚡ Advanced Pairing & Scheduling
-- **Auto High-Low Pairing** for doubles events
-- **Intelligent Scheduling Engine** with court optimization
-- **Real-time Court Management** with live status updates
-- **Conflict Resolution** for player availability
-
-### 📱 Real-time Features
-- **Live Match Updates** via Firestore listeners
-- **Court Status Board** for referees and organizers  
-- **Public Display Boards** with auto-refresh
-- **Web Push Notifications** + selective SMS alerts
-
-### 📊 Match & Scoring System
-- **Set-by-set Score Entry** with validation
-- **Match Status Tracking**: Scheduled → On Court → Completed
-- **Special Situations**: Walkover, No-show, Retired, Paused
-- **Automatic Standings Calculation** with customizable tie-break rules
-
-### 💰 Financial Management
-- **Fee Collection Tracking** (Cash, Transfer, Online)
-- **Treasurer Dashboard** with payment status
-- **Revenue/Expense Reporting**
-- **Receipt Generation**
-
-### 📄 Document Generation
-- **PDF Tournament Brackets** with html2canvas + jsPDF
-- **Tournament Rules** with versioning
-- **Certificates** for winners
-- **Financial Reports**
-
-### 🌐 Public Features
-- **Public Tournament Boards** accessible without login
-- **Search & Filter** functionality
-- **TV/Kiosk Mode** with auto-refresh
-- **Tournament History** and player statistics
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **Framework**: Next.js 14+ (App Router)
-- **Language**: TypeScript
-- **UI Library**: shadcn/ui + Tailwind CSS
-- **State Management**: Zustand + TanStack Query
-- **PWA**: Next PWA with offline support
-- **PDF Generation**: jsPDF + html2canvas
-
-### Backend
-- **Database**: Firebase Firestore
-- **Authentication**: Firebase Auth (Phone/SMS)
-- **Storage**: Firebase Storage  
-- **Functions**: Firebase Functions (Node.js/TypeScript)
-- **Hosting**: Firebase Hosting
-- **Notifications**: Firebase Cloud Messaging (FCM)
-- **Phone Authentication**: Firebase Auth (built-in SMS OTP)
-
-### Development Tools
-- **Package Manager**: pnpm
-- **Linting**: ESLint + Prettier
-- **Testing**: Jest + React Testing Library
-- **CI/CD**: GitHub Actions + Firebase CLI
-
-## 📁 Project Structure
-
-```
-pingpong-league-manager/
-├── docs/                           # Project documentation
-│   ├── product-spec.md            # Product requirements & features
-│   ├── tech-spec.md               # Technical architecture
-│   ├── end-to-end-flow.md         # User journey flows
-│   ├── backend-design.md          # Database & API design
-│   └── frontend-design.md         # UI/UX design system
-├── src/                           # Next.js application
-│   ├── app/                       # App Router pages
-│   │   ├── (auth)/               # Authentication pages
-│   │   ├── (dashboard)/          # Protected dashboard
-│   │   └── (public)/             # Public pages
-│   ├── components/               # React components
-│   │   ├── ui/                   # shadcn/ui components
-│   │   ├── tournament/           # Tournament components
-│   │   ├── match/                # Match components
-│   │   └── common/               # Shared components
-│   ├── hooks/                    # Custom React hooks
-│   ├── lib/                      # Utilities & Firebase config
-│   ├── store/                    # Zustand stores
-│   └── types/                    # TypeScript definitions
-├── functions/                     # Firebase Functions
-│   ├── src/
-│   │   ├── auth.ts              # Authentication functions
-│   │   ├── tournaments.ts       # Tournament management
-│   │   ├── matches.ts           # Match operations
-│   │   ├── notifications.ts     # Notification system
-│   │   └── scheduler.ts         # Scheduling algorithm
-└── public/                       # Static assets
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+ 
-- pnpm
-- Firebase CLI
-- Firebase Project with enabled services:
-  - Firestore Database
-  - Authentication (Phone)
-  - Storage
-  - Functions
-  - Hosting
-  - Cloud Messaging
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/pingpong-league-manager.git
-   cd pingpong-league-manager
-   ```
-
-2. **Install dependencies**
-   ```bash
-   pnpm install
-   ```
-
-3. **Firebase Setup**
-   ```bash
-   # Login to Firebase
-   firebase login
-   
-   # Initialize Firebase project
-   firebase init
-   
-   # Select services: Firestore, Functions, Hosting, Storage
-   ```
-
-4. **Environment Configuration**
-   ```bash
-   # Copy environment template
-   cp .env.example .env.local
-   
-   # Fill in your Firebase config
-   NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-   # ... other Firebase config
-   
-   # No additional SMS configuration needed
-   # Firebase Auth handles phone authentication automatically
-   ```
-
-5. **Start Development**
-   ```bash
-   # Start Firebase Emulators
-   firebase emulators:start
-   
-   # In another terminal, start Next.js
-   pnpm dev
-   ```
-
-### Development Workflow
-
-1. **Phase 1: Foundation (4 weeks)**
-   - [ ] Firebase project setup
-   - [ ] Authentication system
-   - [ ] Basic UI components
-   - [ ] User management
-   - [ ] Tournament CRUD
-
-2. **Phase 2: Core Features (6 weeks)**
-   - [ ] Event registration system
-   - [ ] Match management
-   - [ ] Real-time updates
-   - [ ] Basic scheduling
-   - [ ] Payment tracking
-
-3. **Phase 3: Advanced Features (4 weeks)**
-   - [ ] Advanced scheduling engine
-   - [ ] Notification system
-   - [ ] PDF generation
-   - [ ] Public boards
-   - [ ] PWA implementation
-
-4. **Phase 4: Polish & Optimization (2 weeks)**
-   - [ ] Performance optimization
-   - [ ] Testing
-   - [ ] UI/UX refinements
-   - [ ] Documentation
-
-## 📚 Documentation
-
-- **[Product Specification](docs/product-spec.md)** - Features, user roles, and requirements
-- **[Technical Specification](docs/tech-spec.md)** - Architecture, tech stack, and implementation
-- **[End-to-End Flows](docs/end-to-end-flow.md)** - User journey mapping and system flows  
-- **[Backend Design](docs/backend-design.md)** - Database schema, API design, security rules
-- **[Frontend Design](docs/frontend-design.md)** - UI/UX system optimized for 40+ users
-
-## 🎨 Design Philosophy
-
-This application is specifically designed for **adults 40+ years old** with the following principles:
-
-- **👆 Large Touch Targets**: Minimum 44px, recommended 52-72px
-- **📖 Readable Typography**: 18px base font size (larger than standard)
-- **🎨 High Contrast**: Clear color distinctions for better visibility
-- **🧭 Simple Navigation**: Familiar UI patterns and clear hierarchy
-- **♿ Accessibility First**: WCAG 2.1 AA compliance
-- **📱 Mobile-Friendly**: Touch-optimized with bottom navigation
-
-## 🔒 Security Features
-
-- **Phone-based Authentication** with SMS OTP
-- **Role-based Access Control** with granular permissions
-- **Firestore Security Rules** protecting data access
-- **Input Validation** with Zod schemas
-- **Rate Limiting** for OTP requests and API calls
-- **Audit Logging** for administrative actions
-
-## 🚀 Deployment
-
-### Production Deployment
-
-1. **Build the application**
-   ```bash
-   pnpm build
-   ```
-
-2. **Deploy to Firebase**
-   ```bash
-   firebase deploy
-   ```
-
-3. **Configure Custom Domain** (optional)
-   ```bash
-   firebase hosting:channel:deploy live --expires 30d
-   ```
-
-### Environment Setup
-
-- **Development**: Local with Firebase Emulators
-- **Staging**: Firebase Preview Channels  
-- **Production**: Firebase Hosting
-
-## 🧪 Testing
-
-```bash
-# Run unit tests
-pnpm test
-
-# Run integration tests with emulators
-firebase emulators:exec "pnpm test"
-
-# Run e2e tests
-pnpm test:e2e
-
-# Test accessibility compliance
-pnpm test:a11y
-```
-
-## 📈 Performance
-
-- **Lighthouse Score Target**: 90+ on all metrics
-- **Core Web Vitals**: LCP < 2.5s, FID < 100ms, CLS < 0.1
-- **PWA Features**: Offline support, installable, fast loading
-- **Image Optimization**: Next.js Image component with WebP
-- **Bundle Analysis**: Regular bundle size monitoring
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Follow the coding standards (ESLint + Prettier)
-4. Write tests for new functionality
-5. Ensure accessibility compliance
-6. Commit changes (`git commit -m 'Add amazing feature'`)
-7. Push to branch (`git push origin feature/amazing-feature`)
-8. Open a Pull Request
-
-### Code Standards
-
-- **TypeScript**: Strict mode enabled
-- **ESLint**: Firebase and Next.js recommended configs
-- **Prettier**: Consistent code formatting
-- **Accessibility**: All components must pass a11y tests
-- **Testing**: Minimum 80% coverage for new features
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙋‍♀️ Support
-
-- **Documentation**: Check the `/docs` directory
-- **Issues**: Submit bug reports and feature requests via GitHub Issues
-- **Discussions**: Join project discussions in GitHub Discussions
-
-## 🗺️ Roadmap
-
-### v1.0 - MVP Release
-- ✅ Basic tournament management
-- ✅ User authentication & profiles  
-- ✅ Match scheduling & scoring
-- ✅ Real-time updates
-- ✅ Mobile-responsive design
-
-### v1.1 - Enhanced Features
-- 🔄 Advanced scheduling algorithm
-- 🔄 PDF generation & reporting
-- 🔄 Team tournament support
-- 🔄 Payment integration
-
-### v1.2 - Community Features  
-- ⏳ Player statistics & rankings
-- ⏳ Social features & achievements
-- ⏳ Multi-language support
-- ⏳ Advanced analytics
-
-### v2.0 - Platform Expansion
-- ⏳ Multi-sport support
-- ⏳ Club management features
-- ⏳ API for third-party integrations
-- ⏳ White-label solutions
+**🚀 Production URL**: https://pingpong-league-manager.web.app
 
 ---
 
-Made with ❤️ for the ping pong community, optimized for accessibility and ease of use for players of all ages.
+## ⚡ **Quick Deploy**
+
+Deploy to Firebase Hosting in one command:
+
+```bash
+# Deploy everything
+./deploy.sh
+
+# Or using npm
+pnpm run deploy
+```
+
+**📖 Full deployment guide**: [DEPLOY_QUICK_GUIDE.md](DEPLOY_QUICK_GUIDE.md)
+
+---
+
+## 🎯 **Features**
+
+### **🔐 Authentication & Access Control**
+- **Phone Number + OTP** authentication via Firebase Auth
+- **Role-based access control** (Admin, Organizer, Referee, Treasurer, Captain, Player, Member, Viewer)
+- **Multi-role support** - users can have multiple roles
+- **Admin override** - admins can access all user areas
+- **Quick registration** - new users auto-register with name input
+
+### **👥 User Management**
+- **Complete CRUD operations** for users and user groups
+- **Role assignment** and management
+- **User activation/deactivation**
+- **Real-time user search** and filtering
+- **Firestore integration** for data persistence
+
+### **📱 Modern UI/UX**
+- **Mobile-first responsive design** (Mobile → Tablet → Desktop)
+- **Progressive Web App (PWA)** capabilities
+- **Touch-friendly interfaces** (44px minimum touch targets)
+- **Accessibility compliant** (WCAG 2.1 AA standards)
+- **shadcn/ui components** with Tailwind CSS
+
+### **🏗️ Technical Stack**
+- **Next.js 15+** with App Router
+- **TypeScript** for type safety
+- **Tailwind CSS v4** for styling
+- **Firebase Authentication** & **Firestore**
+- **Firebase Hosting** for deployment
+- **PWA** with offline support
+
+---
+
+## 🚀 **Getting Started**
+
+### **1. Development Setup**
+
+```bash
+# Clone repository
+git clone <repository-url>
+cd pingpong-league-manager
+
+# Install dependencies
+pnpm install
+
+# Setup environment
+pnpm run env:setup --create
+# Edit .env.local with Firebase config
+
+# Start development server
+pnpm dev
+```
+
+### **2. Production Deployment**
+
+```bash
+# Quick deployment
+pnpm run deploy
+
+# Step-by-step
+pnpm run deploy:check    # Verify setup
+pnpm run deploy:build    # Build only
+pnpm run deploy          # Full deployment
+```
+
+### **3. Environment Configuration**
+
+Create `.env.local` with your Firebase config:
+```bash
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NODE_ENV=production
+NEXT_PUBLIC_ENV=production
+NEXT_PUBLIC_USE_FIREBASE_EMULATOR=false
+```
+
+---
+
+## 📱 **User Access**
+
+### **🔑 Admin Access**
+- **Phone**: `0333141692` (hardcoded admin)
+- **Features**: Full user management, admin dashboard
+- **URL**: `/admin`
+
+### **👤 User Access**
+- **Phone**: Any other number (auto-creates member)
+- **Features**: User dashboard, profile management
+- **URL**: `/dashboard`
+
+### **👀 Public Access**
+- **URL**: `/viewer`
+- **Features**: Public tournament viewing (no authentication)
+
+---
+
+## 🛠️ **Development**
+
+### **Available Scripts**
+
+```bash
+# Development
+pnpm dev                 # Start dev server
+pnpm build              # Build for production
+pnpm start              # Start production server
+pnpm lint               # Run ESLint
+
+# Database
+pnpm seed               # Seed Firestore with sample data
+pnpm seed:clean         # Clean and reseed database
+
+# Deployment
+pnpm run deploy         # Full deployment
+pnpm run deploy:check   # Pre-deployment checks
+pnpm run deploy:build   # Build only
+
+# Environment
+pnpm run env:setup      # Setup environment
+pnpm run env:validate   # Validate config
+pnpm run env:show       # Show current config
+
+# Firebase
+pnpm run firebase:deploy   # Direct Firebase deploy
+pnpm run firebase:login    # Authenticate
+pnpm run firebase:use      # Set project
+```
+
+### **Project Structure**
+
+```
+src/
+├── app/                    # Next.js app router pages
+│   ├── (protected)/       # Protected routes (user)
+│   ├── admin/             # Admin-only pages
+│   ├── login/             # Authentication pages
+│   └── viewer/            # Public pages
+├── components/            # React components
+│   ├── auth/             # Authentication components
+│   ├── admin/            # Admin management components
+│   ├── common/           # Shared components
+│   └── layouts/          # Layout components
+├── contexts/             # React contexts
+├── lib/                  # Utilities and configs
+├── services/             # Firebase services
+└── types/                # TypeScript types
+
+scripts/                   # Deployment scripts
+├── deploy.sh             # Main deployment script
+├── deploy.ps1            # Windows PowerShell version
+└── setup-env.sh          # Environment setup helper
+```
+
+---
+
+## 🔧 **Configuration**
+
+### **Firebase Services**
+- **Authentication**: Phone number + OTP
+- **Firestore**: User data and tournament management
+- **Hosting**: Static site deployment
+- **Storage**: File uploads (configured)
+
+### **Next.js Configuration**
+- **Static Export**: For Firebase Hosting
+- **PWA**: Service worker and manifest
+- **Tailwind CSS**: Custom theming with slate palette
+- **TypeScript**: Strict mode enabled
+
+### **Security**
+- **Firestore Rules**: Authentication required
+- **Environment Variables**: Secure config management
+- **HTTPS**: Enforced via Firebase Hosting
+- **Input Validation**: Client and server-side
+
+---
+
+## 🧪 **Testing**
+
+### **Manual Testing Checklist**
+- [ ] **Phone Authentication**: OTP flow works
+- [ ] **User Registration**: Name input and profile creation
+- [ ] **Role Management**: Admin can manage users
+- [ ] **Access Control**: Proper role-based restrictions
+- [ ] **Mobile Responsive**: All screen sizes work
+- [ ] **PWA Features**: Install and offline functionality
+
+### **Test Users**
+- **Admin**: `0333141692`
+- **New Users**: Any phone number (auto-registration)
+
+### **Test URLs**
+- **App**: https://pingpong-league-manager.web.app
+- **Admin**: https://pingpong-league-manager.web.app/admin
+- **Public**: https://pingpong-league-manager.web.app/viewer
+
+---
+
+## 📚 **Documentation**
+
+- **[Deployment Guide](DEPLOYMENT_SCRIPTS.md)** - Complete deployment automation
+- **[Quick Deploy](DEPLOY_QUICK_GUIDE.md)** - TL;DR deployment instructions
+- **[User Management Setup](USER_MANAGEMENT_SETUP.md)** - User system documentation
+- **[Firebase Setup](FIREBASE_SETUP.md)** - Firebase configuration guide
+
+---
+
+## 🔄 **Deployment Workflow**
+
+### **Automated Deployment**
+1. **Environment Check** - Validates Firebase config
+2. **Dependency Management** - Installs/updates packages
+3. **Code Quality** - Runs linting and type checking
+4. **Build Process** - Next.js static export
+5. **Firebase Deploy** - Uploads to hosting
+6. **Verification** - Provides live URLs and stats
+
+### **Manual Steps**
+```bash
+# Check everything is ready
+pnpm run deploy:check
+
+# Deploy to production
+pnpm run deploy
+
+# Verify deployment
+# Test key functionality
+```
+
+---
+
+## 🚨 **Troubleshooting**
+
+### **Common Issues**
+
+**Build Errors**
+```bash
+pnpm build                # Check build locally
+pnpm run deploy:check     # Verify setup
+```
+
+**Authentication Issues**
+```bash
+pnpm run firebase:login   # Re-authenticate
+firebase use pingpong-league-manager  # Set project
+```
+
+**Environment Problems**
+```bash
+pnpm run env:validate     # Check configuration
+pnpm run env:show         # View current settings
+```
+
+---
+
+## 🤝 **Contributing**
+
+1. **Fork the repository**
+2. **Create feature branch**: `git checkout -b feature/amazing-feature`
+3. **Make changes** and test locally
+4. **Test deployment**: `pnpm run deploy:build`
+5. **Commit changes**: `git commit -m 'Add amazing feature'`
+6. **Push to branch**: `git push origin feature/amazing-feature`
+7. **Create Pull Request**
+
+---
+
+## 📈 **Performance**
+
+### **Build Stats**
+- **Total Size**: ~265KB (with chunks)
+- **Static Pages**: 7 routes pre-rendered
+- **PWA Ready**: Service worker + manifest
+- **Mobile Optimized**: Touch-friendly UI
+
+### **Firebase Hosting**
+- **Global CDN**: Fast worldwide delivery
+- **HTTPS**: Automatic SSL certificates
+- **Caching**: Optimized static asset delivery
+- **Rollback**: Easy version management
+
+---
+
+## 📞 **Support**
+
+### **Monitoring**
+- **Firebase Console**: https://console.firebase.google.com/project/pingpong-league-manager
+- **Hosting Dashboard**: https://console.firebase.google.com/project/pingpong-league-manager/hosting
+- **Performance Monitoring**: Real-time metrics
+
+### **Development Help**
+- **Check deployment**: `pnpm run deploy:check`
+- **Environment status**: `pnpm run env:show`
+- **Firebase logs**: Firebase Console → Functions/Hosting logs
+
+---
+
+## 🏓 **Ready to Play!**
+
+Your ping pong league manager is now ready for production use with:
+- ✅ **Automated deployment**
+- ✅ **User management system**
+- ✅ **Role-based access control**
+- ✅ **Mobile-first design**
+- ✅ **PWA capabilities**
+- ✅ **Firebase integration**
+
+**Deploy now**: `pnpm run deploy` 🚀
+
+**Live app**: https://pingpong-league-manager.web.app ✨
