@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "pingpong-league-manager"
-  }
+  },
+  "targets": {
+    "pingpong-league-manager": {
+      "hosting": {
+        "staging": [
+          "pingpong-league-manager"
+        ],
+        "production": [
+          "bongbanbt"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

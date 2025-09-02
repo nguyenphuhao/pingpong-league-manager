@@ -229,8 +229,24 @@ deploy_to_firebase() {
     print_step "Switching to Firebase project: $FIREBASE_PROJECT"
     firebase use "$FIREBASE_PROJECT"
     
-    # Deploy to Firebase Hosting
-    if firebase deploy --only hosting; then
+    # Determine hosting target based on environment
+    local hosting_target
+    case $ENVIRONMENT in
+        "staging")
+            hosting_target="hosting:staging"
+            print_step "Targeting staging site: pingpong-league-manager.web.app"
+            ;;
+        "production")
+            hosting_target="hosting:production"
+            print_step "Targeting production site: bongbanbt.web.app"
+            ;;
+        *)
+            hosting_target="hosting"
+            ;;
+    esac
+    
+    # Deploy to Firebase Hosting with specific target
+    if firebase deploy --only "$hosting_target"; then
         print_success "Deployment completed successfully to $ENVIRONMENT!"
     else
         print_error "Deployment failed"
@@ -246,17 +262,14 @@ show_deployment_info() {
     echo ""
     echo -e "${BLUE}🌐 Live URLs:${NC}"
     
-    # Determine app URL based on Firebase project
+    # Determine app URL based on environment and hosting site
     local app_url
-    case $FIREBASE_PROJECT in
-        "pingpong-dev")
-            app_url="https://pingpong-dev.web.app"
+    case $ENVIRONMENT in
+        "staging")
+            app_url="https://pingpong-league-manager.web.app"  # Staging uses default project site
             ;;
-        "pingpong-staging")
-            app_url="https://pingpong-staging.web.app"
-            ;;
-        "pingpong-league-manager")
-            app_url="https://pingpong-league-manager.web.app"
+        "production")
+            app_url="https://bongbanbt.web.app"  # Production uses custom site
             ;;
         *)
             app_url="https://${FIREBASE_PROJECT}.web.app"
